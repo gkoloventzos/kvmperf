@@ -159,7 +159,7 @@ if [[ ! $TEST_FIO_READ == 0 ]]; then
 	mkdir $FIO_TEST_DIR
 
 	echo "fio random read (in msec) $SIZE" >> $TIMELOG
-	for i in `seq 1 $TEST_FIO_REPEAT`; do
+	for i in `seq 1 $TEST_FIO_READ`; do
 		cp $KERNEL_XZ $FIO_TEST_DIR
 		refresh
 		./$FIO_DIR/$FIO random-read-test.fio | tee >(grep 'read : io' | awk 'BEGIN { FS = "=" }; {print $5+0}' >> $TIMELOG)
@@ -167,7 +167,7 @@ if [[ ! $TEST_FIO_READ == 0 ]]; then
 fi
 if [[ ! $TEST_FIO_WRITE == 0 ]]; then
 	echo "fio random write (in msec) $SIZE" >> $TIMELOG
-	for i in `seq 1 $TEST_FIO_REPEAT`; do
+	for i in `seq 1 $TEST_FIO_WRITE`; do
 		cp $KERNEL_XZ $FIO_TEST_DIR
 		refresh
 		./$FIO_DIR/$FIO random-write-test.fio | tee >(grep 'write: io' | awk 'BEGIN { FS = "="}; {print $5+0}' >> $TIMELOG)
