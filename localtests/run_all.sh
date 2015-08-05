@@ -166,6 +166,9 @@ if [[ ! $TEST_FIO_READ == 0 ]]; then
 	done
 fi
 if [[ ! $TEST_FIO_WRITE == 0 ]]; then
+	rm -rf $FIO_TEST_DIR
+	mkdir $FIO_TEST_DIR
+	
 	echo "fio random write (in msec) $SIZE" >> $TIMELOG
 	for i in `seq 1 $TEST_FIO_WRITE`; do
 		cp $KERNEL_XZ $FIO_TEST_DIR
