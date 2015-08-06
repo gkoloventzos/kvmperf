@@ -3,7 +3,7 @@
 source common.sh
 DEFAULT_SIZE="1M"
 SIZE=${1:-$DEFAULT_SIZE}
-
+REPTS=1
 dd if=/dev/urandom bs=1M count=500 of=foo > /dev/null 2>&1
 
 cat > dd_cmd.sh << EOF
