@@ -12,7 +12,7 @@ sync
 EOF
 chmod a+x dd_cmd.sh
 DD="./dd_cmd.sh"
-
+cat dd_cmd.sh
 for i in `seq 1 $REPTS`; do
 	echo -n "."
 	rm foo
@@ -22,4 +22,4 @@ for i in `seq 1 $REPTS`; do
 	$TIME $DD > /dev/null 2>&1
 	power_end $i
 done
-echo ""
+echo "done"
