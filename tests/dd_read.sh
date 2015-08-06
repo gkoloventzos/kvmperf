@@ -1,13 +1,15 @@
 #!/bin/bash
 
 source common.sh
+DEFAULT_SIZE="1M"
+SIZE=${1:-$DEFAULT_SIZE}
 
 dd if=/dev/urandom bs=1M count=500 of=foo > /dev/null 2>&1
 
 cat > dd_cmd.sh << EOF
 #!/bin/bash
 
-dd if=foo bs=1M count=500 of=/dev/null
+dd if=foo bs=$SIZE count=500 of=/dev/null
 sync
 EOF
 chmod a+x dd_cmd.sh
