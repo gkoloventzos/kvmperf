@@ -15,9 +15,12 @@ EOF
 chmod a+x dd_cmd.sh
 DD="./dd_cmd.sh"
 
+cat ./dd_cmd.sh
+echo $REPTS
+
 for i in `seq 1 $REPTS`; do
 	echo -n "."
-	rm bar
+#	rm bar
 	sync
 	echo 3 > /proc/sys/vm/drop_caches
 	power_start $i
