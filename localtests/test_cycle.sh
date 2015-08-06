@@ -90,9 +90,9 @@ fio() {
       cat /sys/kernel/debug/kvm/exit_stats
     fi
   else
-    cp $KERNEL_XZ $FIO_TEST_DIR
-    refresh
-    echo reset > /sys/kernel/debug/kvm/exit_stats
+#    cp $KERNEL_XZ $FIO_TEST_DIR
+#    refresh
+#    echo reset > /sys/kernel/debug/kvm/exit_stats
     if [[ "$GUEST_IP" == "" ]]; then
       rm -rf $FIO_TEST_DIR
       mkdir $FIO_TEST_DIR
