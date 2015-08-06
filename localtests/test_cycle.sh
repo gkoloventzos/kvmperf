@@ -40,11 +40,13 @@ usage() {
   echo "\t -g | --guest <ip>"
 }
 
+SUBTEST=""
+
 while :
 do
-  if [[ $1 == "" ]]; then
-    break
-  fi
+#  if [[ $1 == "" ]]; then
+#    break
+#  fi
   case "$1" in
     -t | --test )
       TEST="$2"
@@ -54,54 +56,59 @@ do
       GUEST_IP="$2"
       shift 2
       ;;
-    --) # End of all options
+    -- ) # End of all options
       shift
       break
       ;;
-    -*) # Unknown option
+    -* ) # Unknown option
       echo "Error: Unknown option: $1" >&2
       exit 1
+      ;;
+    * )
+      SUBTEST="$1"
+      break
       ;;
   esac
 done
 
 fio() {
 
-  if [[ "$GUEST_IP" == "" ]]; then
-    rm -rf $FIO_TEST_DIR
-    mkdir $FIO_TEST_DIR
+  if [[ "$SUBTEST" == "read" ]]; then
+    if [[ "$GUEST_IP" == "" ]]; then
+      rm -rf $FIO_TEST_DIR
+      mkdir $FIO_TEST_DIR
+      cp $KERNEL_XZ $FIO_TEST_DIR
+      refresh
+
+      echo reset > /sys/kernel/debug/kvm/exit_stats
+      ./$FIO_DIR/$FIO random-read-test.fio
+      cat /sys/kernel/debug/kvm/exit_stats
+      rm -rf $FIO_TEST_DIR
+    else
+      echo reset > /sys/kernel/debug/kvm/exit_stats
+      ssh -oBatchMode=yes -o "StrictHostKeyChecking no" -l root $GUEST_IP "cd ~/kvmperf/localtests/; rm -rf $FIO_TEST_DIR; mkdir $FIO_TEST_DIR; cp $KERNEL_XZ $FIO_TEST_DIR; ./fio-2.1.10/fio random-read-test.fio"
+      cat /sys/kernel/debug/kvm/exit_stats
+    fi
+  else
     cp $KERNEL_XZ $FIO_TEST_DIR
     refresh
+    echo reset > /sys/kernel/debug/kvm/exit_stats
+    if [[ "$GUEST_IP" == "" ]]; then
+      rm -rf $FIO_TEST_DIR
+      mkdir $FIO_TEST_DIR
+      cp $KERNEL_XZ $FIO_TEST_DIR
+      refresh
 
-    echo reset > /sys/kernel/debug/kvm/exit_stats
-    ./$FIO_DIR/$FIO random-read-test.fio
-    cat /sys/kernel/debug/kvm/exit_stats
-    rm -rf $FIO_TEST_DIR
-  else
-    echo reset > /sys/kernel/debug/kvm/exit_stats
-    ssh -oBatchMode=yes -o "StrictHostKeyChecking no" -l root $GUEST_IP "cd ~/kvmperf/localtests/; rm -rf $FIO_TEST_DIR; mkdir $FIO_TEST_DIR; cp $KERNEL_XZ $FIO_TEST_DIR; ./fio-2.1.10/fio random-read-test.fio"
-    cat /sys/kernel/debug/kvm/exit_stats
+      echo reset > /sys/kernel/debug/kvm/exit_stats
+      ./$FIO_DIR/$FIO random-write-test.fio
+      cat /sys/kernel/debug/kvm/exit_stats
+      rm -rf $FIO_TEST_DIR
+    else
+      echo reset > /sys/kernel/debug/kvm/exit_stats
+      ssh -oBatchMode=yes -o "StrictHostKeyChecking no" -l root $GUEST_IP "cd ~/kvmperf/localtests/; rm -rf $FIO_TEST_DIR; mkdir $FIO_TEST_DIR; cp $KERNEL_XZ $FIO_TEST_DIR; ./fio-2.1.10/fio random-write-test.fio"
+      cat /sys/kernel/debug/kvm/exit_stats
+    fi
   fi
-
-  cp $KERNEL_XZ $FIO_TEST_DIR
-  refresh
-  echo reset > /sys/kernel/debug/kvm/exit_stats
-  if [[ "$GUEST_IP" == "" ]]; then
-    rm -rf $FIO_TEST_DIR
-    mkdir $FIO_TEST_DIR
-    cp $KERNEL_XZ $FIO_TEST_DIR
-    refresh
-
-    echo reset > /sys/kernel/debug/kvm/exit_stats
-    ./$FIO_DIR/$FIO random-write-test.fio
-    cat /sys/kernel/debug/kvm/exit_stats
-    rm -rf $FIO_TEST_DIR
-  else
-    echo reset > /sys/kernel/debug/kvm/exit_stats
-    ssh -oBatchMode=yes -o "StrictHostKeyChecking no" -l root $GUEST_IP "cd ~/kvmperf/localtests/; rm -rf $FIO_TEST_DIR; mkdir $FIO_TEST_DIR; cp $KERNEL_XZ $FIO_TEST_DIR; ./fio-2.1.10/fio random-write-test.fio"
-    cat /sys/kernel/debug/kvm/exit_stats
-  fi
-
 }
 
 kernbench() {
