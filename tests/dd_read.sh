@@ -1,15 +1,16 @@
 #!/bin/bash
 
+#the count sould be changed also when we change bs
 source common.sh
-DEFAULT_SIZE="1M"
+DEFAULT_SIZE="32k"
 SIZE=${1:-$DEFAULT_SIZE}
 REPTS=1
-dd if=/dev/urandom bs=1M count=500 of=foo > /dev/null 2>&1
+dd if=/dev/urandom bs=$SIZE count=2600 of=foo > /dev/null 2>&1
 
 cat > dd_cmd.sh << EOF
 #!/bin/bash
 
-dd if=foo bs=$SIZE count=2406 of=/dev/null
+dd if=foo bs=$SIZE count=2600 of=/dev/null
 sync
 EOF
 chmod a+x dd_cmd.sh
