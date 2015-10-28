@@ -15,11 +15,17 @@ FIO_TEST_DIR="fio_test"
 PBZIP_DIR="pbzip_test"
 
 DEFAULT_SIZE="4k"
+random=""
 TEST_PBZIP_REPEAT=${1:-3}
 TEST_KERNBENCH_REPEAT=${2:-1}
 TEST_FIO_READ=${3:-3}
 TEST_FIO_WRITE=${4:-3}
 SIZE=${5:-$DEFAULT_SIZE}
+rand=${6:-0}
+
+if [ $rand -eq 1 ]; then
+    random="rand"
+fi
 
 TIMELOG=$(pwd)/time.txt
 TIME="/usr/bin/time --format=%e -o $TIMELOG --append"
@@ -108,8 +114,8 @@ fi
 
 echo "; random write of 128mb of data
 
-[random-write]
-rw=randwrite
+[${random}write]
+rw=${random}write
 filename=$FIO_TEST_DIR/$KERNEL_XZ
 direct=1
 invalidate=1
@@ -121,14 +127,14 @@ bs=$SIZE
 
 echo "; random read of 128mb of data
 
-[random-read]
-rw=randread
+[${random}read]
+rw=${random}read
 filename=$FIO_TEST_DIR/$KERNEL_XZ
 direct=1
 invalidate=1
 iodepth=8
 ioengine=sync
-bs=$SIZE
+bs=${SIZE}
 "> random-read-test.fio
 
 if [[ ! $TEST_PBZIP_REPEAT == 0 ]]; then
