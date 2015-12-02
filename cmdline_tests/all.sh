@@ -10,5 +10,5 @@ REPTS=${2-40}
 
 ./apache.sh $SERVER $REPTS
 ./mysql.sh run $SERVER $REPTS
-./netperf.sh ALL $SERVER $REPTS
+./netperf.sh $SERVER ALL $REPTS
 ./memcached.sh $SERVER $REPTS
