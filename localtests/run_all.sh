@@ -114,7 +114,7 @@ fi
 FSystem=`sudo grub-probe /`
 ex=`echo $?`
 
-if [ $FSystem != "zfs" -o $ex -eq 1]; then
+if [ $FSystem != "zfs" -o $ex -eq 1 ]; then
 
     echo "; random write of 128mb of data
 
