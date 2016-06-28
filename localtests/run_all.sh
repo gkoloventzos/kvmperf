@@ -111,31 +111,58 @@ else
 	sync
 fi
 
+FSystem=`sudo grub-probe /`
+ex=`echo $?`
 
-echo "; random write of 128mb of data
+if [ $FSystem != "zfs" -o $ex -eq 1]; then
 
-[${random}write]
-rw=${random}write
-filename=$FIO_TEST_DIR/$KERNEL_XZ
-direct=1
-invalidate=1
-iodepth=8
-ioengine=sync
-bs=$SIZE
-" > random-write-test.fio
+    echo "; random write of 128mb of data
+
+    [${random}write]
+    rw=${random}write
+    filename=$FIO_TEST_DIR/$KERNEL_XZ
+    direct=1
+    invalidate=1
+    iodepth=8
+    ioengine=sync
+    bs=$SIZE
+    " > random-write-test.fio
 
 
-echo "; random read of 128mb of data
+    echo "; random read of 128mb of data
 
-[${random}read]
-rw=${random}read
-filename=$FIO_TEST_DIR/$KERNEL_XZ
-direct=1
-invalidate=1
-iodepth=8
-ioengine=sync
-bs=${SIZE}
-"> random-read-test.fio
+    [${random}read]
+    rw=${random}read
+    filename=$FIO_TEST_DIR/$KERNEL_XZ
+    direct=1
+    invalidate=1
+    iodepth=8
+    ioengine=sync
+    bs=${SIZE}
+    "> random-read-test.fio
+else
+    echo "; random write of 128mb of data
+
+    [${random}write]
+    rw=${random}write
+    filename=$FIO_TEST_DIR/$KERNEL_XZ
+    invalidate=1
+    iodepth=8
+    ioengine=sync
+    bs=$SIZE
+    " > random-write-test.fio
+
+    echo "; random read of 128mb of data
+
+    [${random}read]
+    rw=${random}read
+    filename=$FIO_TEST_DIR/$KERNEL_XZ
+    invalidate=1
+    iodepth=8
+    ioengine=sync
+    bs=${SIZE}
+    "> random-read-test.fio
+fi
 
 if [[ ! $TEST_PBZIP_REPEAT == 0 ]]; then
 	rm -rf $PBZIP_DIR
